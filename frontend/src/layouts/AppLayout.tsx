@@ -79,13 +79,13 @@ export default function AppLayout() {
               description="Authenticated role is read-only. Create, edit, delete, and renewal submission actions are disabled."
             />
           ) : null}
-          {!isLoading && !isFetching && user?.username === 'guest' ? (
+          {!isLoading && !isFetching && user?.username === 'local-admin' ? (
             <Alert
               type="info"
               showIcon
               style={{ marginBottom: 16 }}
               message="Authentication fallback active"
-              description="GET /api/me is unavailable or returned an error, so the UI is using a local guest profile."
+              description="GET /api/me is unavailable or returned an error, so the UI is temporarily using a local write-enabled admin profile for testing."
             />
           ) : null}
           <Outlet context={{ navigate }} />

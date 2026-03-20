@@ -35,4 +35,4 @@ VITE_API_BASE_URL=http://localhost:8080
 - Asset Detail
 - Renewal Phase 1 / Phase 2
 - Master Data CRUD Pages
-- `/api/me` 身分資訊載入（若後端尚未提供，會以 guest read-only fallback 顯示）
+- `/api/me` 身分資訊載入（若後端尚未提供，會暫時以 local-admin write fallback 顯示，方便先測功能）

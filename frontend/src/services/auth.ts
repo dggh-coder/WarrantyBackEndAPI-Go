@@ -2,8 +2,8 @@ import api, { unwrapData } from './api';
 import type { UserProfile } from '../types/auth';
 
 const FALLBACK_USER: UserProfile = {
-  username: 'guest',
-  role: 'read',
+  username: 'local-admin',
+  role: 'write',
 };
 
 export async function fetchCurrentUser(): Promise<UserProfile> {
