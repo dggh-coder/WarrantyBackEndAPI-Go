@@ -16,7 +16,6 @@ const { Search } = Input;
 const DEFAULT_COLUMN_STORAGE_PREFIX = 'asset-app-visible-columns';
 
 type AssetColumnKey =
-  | 'id'
   | 'item_number'
   | 'name'
   | 'quantity'
@@ -133,54 +132,24 @@ export default function AssetListPage() {
 
   const columnConfigs = useMemo<AssetColumnConfig[]>(() => [
     {
-      key: 'id',
-      label: 'ID',
-      hideable: false,
-      column: {
-        key: 'id',
-        title: 'ID',
-        dataIndex: 'id',
-        width: 80,
-        sorter: (a, b) => a.id - b.id,
-        fixed: 'left',
-      },
-    },
-    {
-      key: 'item_number',
-      label: 'Item Number',
-      hideable: false,
-      column: {
-        key: 'item_number',
-        title: 'Item Number',
-        dataIndex: 'item_number',
-        width: 160,
-        fixed: 'left',
-        sorter: (a, b) => a.item_number.localeCompare(b.item_number),
-        render: (_, record) => (
-          <Button type="link" onClick={() => navigate(`/assets/${record.id}`)} style={{ padding: 0 }}>
-            {record.item_number}
-          </Button>
-        ),
-      },
-    },
-    {
       key: 'name',
-      label: 'Name',
+      label: 'Warranty Product',
       column: {
         key: 'name',
-        title: 'Name',
+        title: 'Warranty Product',
         dataIndex: 'name',
-        width: 180,
+        width: 220,
+        fixed: 'left',
         sorter: (a, b) => (a.name ?? '').localeCompare(b.name ?? ''),
         render: (_, record) => record.name || '-',
       },
     },
     {
       key: 'quantity',
-      label: 'Quantity',
+      label: 'Qty',
       column: {
         key: 'quantity',
-        title: 'Quantity',
+        title: 'Qty',
         dataIndex: 'quantity',
         width: 100,
         sorter: (a, b) => a.quantity - b.quantity,
@@ -188,46 +157,23 @@ export default function AssetListPage() {
     },
     {
       key: 'unit',
-      label: 'Unit',
+      label: 'Qty Unit',
       column: {
         key: 'unit',
-        title: 'Unit',
+        title: 'Qty Unit',
         width: 140,
         render: (_, record) => record.unit?.name ?? '-',
         sorter: (a, b) => (a.unit?.name ?? '').localeCompare(b.unit?.name ?? ''),
       },
     },
     {
-      key: 'category',
-      label: 'Category',
+      key: 'sns',
+      label: 'S/N',
       column: {
-        key: 'category',
-        title: 'Category',
-        width: 160,
-        render: (_, record) => record.category?.name ?? '-',
-        sorter: (a, b) => (a.category?.name ?? '').localeCompare(b.category?.name ?? ''),
-      },
-    },
-    {
-      key: 'location',
-      label: 'Location',
-      column: {
-        key: 'location',
-        title: 'Location',
-        width: 160,
-        render: (_, record) => record.location?.name ?? '-',
-        sorter: (a, b) => (a.location?.name ?? '').localeCompare(b.location?.name ?? ''),
-      },
-    },
-    {
-      key: 'supplier',
-      label: 'Supplier',
-      column: {
-        key: 'supplier',
-        title: 'Supplier',
-        width: 160,
-        render: (_, record) => record.supplier?.name ?? '-',
-        sorter: (a, b) => (a.supplier?.name ?? '').localeCompare(b.supplier?.name ?? ''),
+        key: 'sns',
+        title: 'S/N',
+        width: 220,
+        render: (_, record) => record.sns?.map((sn) => sn.sn_value).join(', ') || '-',
       },
     },
     {
@@ -253,13 +199,135 @@ export default function AssetListPage() {
       },
     },
     {
-      key: 'sns',
-      label: 'SNs',
+      key: 'location',
+      label: 'Location',
       column: {
-        key: 'sns',
-        title: 'SNs',
-        width: 220,
-        render: (_, record) => record.sns?.map((sn) => sn.sn_value).join(', ') || '-',
+        key: 'location',
+        title: 'Location',
+        width: 160,
+        render: (_, record) => record.location?.name ?? '-',
+        sorter: (a, b) => (a.location?.name ?? '').localeCompare(b.location?.name ?? ''),
+      },
+    },
+    {
+      key: 'supplier',
+      label: 'Supplier',
+      column: {
+        key: 'supplier',
+        title: 'Supplier',
+        width: 160,
+        render: (_, record) => record.supplier?.name ?? '-',
+        sorter: (a, b) => (a.supplier?.name ?? '').localeCompare(b.supplier?.name ?? ''),
+      },
+    },
+    {
+      key: 'expiry_date',
+      label: 'Warranty Expire Date',
+      column: {
+        key: 'expiry_date',
+        title: 'Warranty Expire Date',
+        dataIndex: 'expiry_date',
+        width: 180,
+        render: (value) => (value ? formatDate(value) : '-'),
+        sorter: (a, b) => (a.expiry_date ?? '').localeCompare(b.expiry_date ?? ''),
+      },
+    },
+    {
+      key: 'yearly_cost',
+      label: 'Yearly Cost',
+      column: {
+        key: 'yearly_cost',
+        title: 'Yearly Cost',
+        dataIndex: 'yearly_cost',
+        width: 140,
+        render: (value) => formatCurrency(value),
+        sorter: (a, b) => (a.yearly_cost ?? 0) - (b.yearly_cost ?? 0),
+      },
+    },
+    {
+      key: 'in_use',
+      label: 'In Use',
+      column: {
+        key: 'in_use',
+        title: 'In Use',
+        dataIndex: 'in_use',
+        width: 110,
+        render: (value) => formatBoolean(value),
+        sorter: (a, b) => Number(a.in_use) - Number(b.in_use),
+      },
+    },
+    {
+      key: 'category',
+      label: 'Category',
+      column: {
+        key: 'category',
+        title: 'Category',
+        width: 160,
+        render: (_, record) => record.category?.name ?? '-',
+        sorter: (a, b) => (a.category?.name ?? '').localeCompare(b.category?.name ?? ''),
+      },
+    },
+    {
+      key: 'commission_date',
+      label: 'Commission Date',
+      column: {
+        key: 'commission_date',
+        title: 'Commission Date',
+        dataIndex: 'commission_date',
+        width: 170,
+        render: (value) => (value ? formatDate(value) : '-'),
+        sorter: (a, b) => (a.commission_date ?? '').localeCompare(b.commission_date ?? ''),
+      },
+    },
+    {
+      key: 'commission_ip',
+      label: 'Commision IP',
+      column: {
+        key: 'commission_ip',
+        title: 'Commision IP',
+        dataIndex: 'commission_ip',
+        width: 160,
+        render: (value) => value || '-',
+      },
+    },
+    {
+      key: 'recent_ip',
+      label: 'Recent IP',
+      column: {
+        key: 'recent_ip',
+        title: 'Recent IP',
+        dataIndex: 'recent_ip',
+        width: 150,
+        render: (value) => value || '-',
+      },
+    },
+    {
+      key: 'price',
+      label: 'Price',
+      column: {
+        key: 'price',
+        title: 'Price',
+        dataIndex: 'price',
+        width: 140,
+        render: (value) => formatCurrency(value),
+        sorter: (a, b) => (a.price ?? 0) - (b.price ?? 0),
+      },
+    },
+    {
+      key: 'item_number',
+      label: 'Item Number',
+      hideable: false,
+      column: {
+        key: 'item_number',
+        title: 'Item Number',
+        dataIndex: 'item_number',
+        width: 180,
+        sorter: (a, b) => a.item_number.localeCompare(b.item_number),
+        render: (_, record) => (
+          <Button type="link" onClick={() => navigate(`/assets/${record.id}`)} style={{ padding: 0 }}>
+            {record.item_number}
+          </Button>
+        ),
       },
     },
     {
@@ -288,88 +356,6 @@ export default function AssetListPage() {
         dataIndex: 'remind_before_days',
         width: 160,
         sorter: (a, b) => a.remind_before_days - b.remind_before_days,
-      },
-    },
-    {
-      key: 'expiry_date',
-      label: 'Expiry Date',
-      column: {
-        key: 'expiry_date',
-        title: 'Expiry Date',
-        dataIndex: 'expiry_date',
-        width: 140,
-        render: (value) => (value ? formatDate(value) : '-'),
-        sorter: (a, b) => (a.expiry_date ?? '').localeCompare(b.expiry_date ?? ''),
-      },
-    },
-    {
-      key: 'yearly_cost',
-      label: 'Yearly Cost',
-      column: {
-        key: 'yearly_cost',
-        title: 'Yearly Cost',
-        dataIndex: 'yearly_cost',
-        width: 140,
-        render: (value) => formatCurrency(value),
-        sorter: (a, b) => (a.yearly_cost ?? 0) - (b.yearly_cost ?? 0),
-      },
-    },
-    {
-      key: 'price',
-      label: 'Price',
-      column: {
-        key: 'price',
-        title: 'Price',
-        dataIndex: 'price',
-        width: 140,
-        render: (value) => formatCurrency(value),
-        sorter: (a, b) => (a.price ?? 0) - (b.price ?? 0),
-      },
-    },
-    {
-      key: 'in_use',
-      label: 'In Use',
-      column: {
-        key: 'in_use',
-        title: 'In Use',
-        dataIndex: 'in_use',
-        width: 110,
-        render: (value) => formatBoolean(value),
-        sorter: (a, b) => Number(a.in_use) - Number(b.in_use),
-      },
-    },
-    {
-      key: 'commission_date',
-      label: 'Commission Date',
-      column: {
-        key: 'commission_date',
-        title: 'Commission Date',
-        dataIndex: 'commission_date',
-        width: 170,
-        render: (value) => (value ? formatDate(value) : '-'),
-        sorter: (a, b) => (a.commission_date ?? '').localeCompare(b.commission_date ?? ''),
-      },
-    },
-    {
-      key: 'commission_ip',
-      label: 'Commission IP',
-      column: {
-        key: 'commission_ip',
-        title: 'Commission IP',
-        dataIndex: 'commission_ip',
-        width: 150,
-        render: (value) => value || '-',
-      },
-    },
-    {
-      key: 'recent_ip',
-      label: 'Recent IP',
-      column: {
-        key: 'recent_ip',
-        title: 'Recent IP',
-        dataIndex: 'recent_ip',
-        width: 150,
-        render: (value) => value || '-',
       },
     },
     {
